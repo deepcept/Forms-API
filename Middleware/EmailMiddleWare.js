@@ -15,29 +15,6 @@ const spamKeywords = [
   'as seen on tv', 'congratulations', 'you have won', 'claim your prize'
 ];
 
-export const rateLimiter = (req, res, next) => {
-  const ip = req.ip;
-
-  if (!requestCount[ip]) {
-    requestCount[ip] = { count: 1, time: Date.now() };
-    return next();
-  }
-
-  const elapsed = Date.now() - requestCount[ip].time;
-
-  if (elapsed > TIME_WINDOW) {
-    requestCount[ip] = { count: 1, time: Date.now() };
-    return next();
-  }
-
-  if (requestCount[ip].count >= MAX_REQUESTS) {
-    return res.status(429).json({ success: false, message: 'Too many requests. Please try again later.' });
-  }
-
-  requestCount[ip].count++;
-  next();
-};
-
 export const validateEmailRequest = async (req, res, next) => {
   const { name, email, phone, collegeName, domain, message } = req.body;
 
